@@ -19,4 +19,4 @@ func _ready():
 ![](addons/simplemenu/images/2024-04-07_081721.png)
 
 
-Please refer to the example for details: res://addons/simplemenu/example/
+Please refer to the example for details: **addons/simplemenu/example/**
