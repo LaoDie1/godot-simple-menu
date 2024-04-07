@@ -1,4 +1,5 @@
-轻松创建菜单功能，只需
+Easy menu creation function：
+
 
 ```gdscript
 func _ready():
@@ -15,4 +16,7 @@ func _ready():
 	})
 ```
 
-即可快速创建菜单功能，详见 res://addons/simplemenu/example/ 中的实例
+![](addons/simplemenu/images/2024-04-07_081721.png)
+
+
+Please refer to the example for details: res://addons/simplemenu/example/
