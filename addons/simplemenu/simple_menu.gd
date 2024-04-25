@@ -77,7 +77,7 @@ func _execute_menu_by_path(menu_path: StringName, method_name: String, params: A
 	var menu = get_menu(menu_path)
 	var idx = get_menu_idx(menu_path)
 	if menu and idx > 0:
-		return menu.call(method_name, params)
+		return menu.callv(method_name, params)
 	return null
 
 ## 设置菜单的可用性
@@ -87,12 +87,20 @@ func set_item_disabled(menu_path: StringName, value: bool):
 	if menu and idx > -1:
 		menu.set_item_disabled(idx, value)
 
-## 设置菜单为复选框
+## 设置菜单复选框启用状态
 func set_menu_as_checkable(menu_path: StringName, value: bool):
 	var menu = get_menu(menu_path)
 	var idx = get_menu_idx(menu_path)
 	if menu and idx > 0:
 		menu.set_item_as_checkable(idx, value)
+
+## 菜单复选框是否是启用的
+func is_menu_as_checkable(menu_path: StringName) -> bool:
+	var menu = get_menu(menu_path)
+	var idx = get_menu_idx(menu_path)
+	if menu and idx > 0:
+		return menu.is_item_checkable(idx)
+	return false
 
 ## 设置菜单项的图标
 func set_icon(menu_path: StringName, icon: Texture2D):
@@ -109,9 +117,13 @@ func set_icon(menu_path: StringName, icon: Texture2D):
 func set_menu_checked(menu_path: StringName, value: bool):
 	var menu = get_menu(menu_path)
 	var idx = get_menu_idx(menu_path)
-	if menu and idx > 0 and menu.is_item_checked(idx) != value:
-		menu.set_item_checked(idx, value)
-		self.menu_check_toggled.emit(idx, menu_path)
+	if menu and idx > -1:
+		menu.set_item_as_checkable(idx, true)
+		if menu.is_item_checked(idx) != value:
+			menu.set_item_checked(idx, value)
+			self.menu_check_toggled.emit(idx, menu_path)
+	else:
+		printerr("没有这个菜单：", menu_path)
 
 ## 获取这个菜单的勾选状态
 func get_menu_checked(menu_path: StringName) -> bool:
@@ -123,7 +135,10 @@ func get_menu_checked(menu_path: StringName) -> bool:
 
 ## 切换菜单的勾选状态
 func toggle_menu_checked(menu_path: StringName) -> bool:
-	return _execute_menu_by_path(menu_path, "is_item_checked", [])
+	var id = get_menu_idx(menu_path)
+	var status = _execute_menu_by_path(menu_path, "is_item_checked", [id])
+	set_menu_checked(menu_path, not status)
+	return not status
 
 ## 获取这个菜单的索引，如果不存在这个菜单，则返回 [kbd]-1[/kbd]
 func get_menu_idx(menu_path: StringName) -> int:
@@ -374,6 +389,9 @@ func _set_popup_menu(menu_path: StringName, menu_popup: PopupMenu):
 
 
 func _id_pressed(id):
-	self.menu_pressed.emit(id, _idx_to_menu_path_map[id])
-
+	var menu_path = _idx_to_menu_path_map[id]
+	if is_menu_as_checkable(menu_path):
+		var status = get_menu_checked(menu_path)
+		set_menu_checked(menu_path, not status)
+	self.menu_pressed.emit(id, menu_path)
 
