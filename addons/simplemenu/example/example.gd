@@ -17,7 +17,7 @@ func _ready():
 		],
 		"Edit": [
 			"Undo", "Redo", "-",
-			"Copy", "Cut", "Clear",
+			"Copy", "Paste", "Cut", "Clear",
 		]
 	})
 	
@@ -28,6 +28,7 @@ func _ready():
 		"/Edit/Undo": SimpleMenu.parse_shortcut("Ctrl+Z"),
 		"/Edit/Redo": SimpleMenu.parse_shortcut("Ctrl+Shift+Z"),
 		"/Edit/Copy": SimpleMenu.parse_shortcut("Ctrl+C"),
+		"/Edit/Paste": SimpleMenu.parse_shortcut("Ctrl+V"),
 		"/Edit/Cut": SimpleMenu.parse_shortcut("Ctrl+X"),
 	})
 	
@@ -37,6 +38,7 @@ func _ready():
 		"/Edit/Undo": ICONS.get_icon("UndoRedo", "EditorIcons"),
 		"/Edit/Copy": ICONS.get_icon("ActionCopy", "EditorIcons"),
 		"/Edit/Cut": ICONS.get_icon("ActionCut", "EditorIcons"),
+		"/Edit/Paste": ICONS.get_icon("ActionPaste", "EditorIcons"),
 		"/Edit/Clear": ICONS.get_icon("Clear", "EditorIcons"),
 	})
 
