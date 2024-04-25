@@ -11,9 +11,9 @@ config_version=5
 [application]
 
 config/name="godot-simple-menu"
-config/features=PackedStringArray("4.2", "Forward Plus")
+config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/git_plugin/plugin.cfg", "res://addons/simplemenu/plugin.cfg")
+enabled=PackedStringArray("res://addons/simplemenu/plugin.cfg")

@@ -19,7 +19,7 @@ extends MenuBar
 ##[br][kbd]menu_path[/kbd] 菜单路径
 signal menu_pressed(idx: int, menu_path: StringName)
 ## 复选框状态发生切换
-signal menu_check_toggled(idx: int, menu_path: StringName)
+signal menu_check_toggled(idx: int, menu_path: StringName, status: bool)
 
 
 # 自动增长的菜单 idx。用以下面添加菜单项时记录添加的菜单的 idx
@@ -121,7 +121,7 @@ func set_menu_checked(menu_path: StringName, value: bool):
 		menu.set_item_as_checkable(idx, true)
 		if menu.is_item_checked(idx) != value:
 			menu.set_item_checked(idx, value)
-			self.menu_check_toggled.emit(idx, menu_path)
+			self.menu_check_toggled.emit(idx, menu_path, value)
 	else:
 		printerr("没有这个菜单：", menu_path)
 
@@ -394,4 +394,5 @@ func _id_pressed(id):
 		var status = get_menu_checked(menu_path)
 		set_menu_checked(menu_path, not status)
 	self.menu_pressed.emit(id, menu_path)
+
 
