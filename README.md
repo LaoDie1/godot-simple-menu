@@ -3,7 +3,8 @@ Easy menu creation function：
 
 ```gdscript
 func _ready():
-	SimpleMenuObject.init_menu({
+	var menu : SimpleMenu = %Menu
+	menu.init_menu({
 		"File": [
 			"Open", "Save", "Save As", "-",
 			{"Export As": [ "Export PNG", "Export JPG" ] }, "-",
