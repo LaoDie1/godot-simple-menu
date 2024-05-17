@@ -17,7 +17,8 @@ func _ready():
 		],
 		"Edit": [
 			"Undo", "Redo", "-",
-			"Copy", "Paste", "Cut", "Clear",
+			"Copy", "Paste", "Cut", "Clear", "-",
+			"Auto Save"
 		]
 	})
 	
@@ -41,6 +42,10 @@ func _ready():
 		"/Edit/Paste": ICONS.get_icon("ActionPaste", "EditorIcons"),
 		"/Edit/Clear": ICONS.get_icon("Clear", "EditorIcons"),
 	})
+	
+	simple_menu.set_menu_as_checkable("/Edit/Auto Save", true)
+	simple_menu.set_menu_checked("/Edit/Auto Save", true)
+	
 
 
 func _on_simple_menu_menu_pressed(idx, menu_path):
