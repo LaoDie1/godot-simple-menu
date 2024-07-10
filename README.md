@@ -24,6 +24,19 @@ func _ready():
 			"Copy", "Cut", "Clear",
 		]
 	})
+	
+	simple_menu.init_shortcut({
+		"/File/Open": SimpleMenu.parse_shortcut("Ctrl+O"),
+		"/File/Save": SimpleMenu.parse_shortcut("Ctrl+S"),
+		"/File/Save As": SimpleMenu.parse_shortcut("Ctrl+Shift+S"),
+		"/Edit/Undo": SimpleMenu.parse_shortcut("Ctrl+Z"),
+		"/Edit/Redo": SimpleMenu.parse_shortcut("Ctrl+Shift+Z"),
+		"/Edit/Copy": SimpleMenu.parse_shortcut("Ctrl+C"),
+		"/Edit/Paste": SimpleMenu.parse_shortcut("Ctrl+V"),
+		"/Edit/Cut": SimpleMenu.parse_shortcut("Ctrl+X"),
+	})
+	
+	
 ```
 
 A dictionary is equivalent to a menu, with a list of options and a string of options. Use the menu path for control.
