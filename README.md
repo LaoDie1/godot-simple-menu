@@ -1,3 +1,12 @@
+![Plugin Logo](icon.svg)
+
+# Godot Simple Menu
+
+[![Godot Engine 4.3.1](https://img.shields.io/badge/Godot%20Engine-4.3-blue)](https://godotengine.org/)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](https://lbesson.mit-license.org/)
+
+---
+
 Easy menu creation function：
 
 
@@ -7,7 +16,7 @@ func _ready():
 	menu.init_menu({
 		"File": [
 			"Open", "Save", "Save As", "-",
-			{"Export As": [ "Export PNG", "Export JPG" ] }, "-",
+			{"Export As...": [ "Export PNG", "Export JPG" ] }, "-",
 			"Quit",
 		],
 		"Edit": [
@@ -23,5 +32,3 @@ A dictionary is equivalent to a menu, with a list of options and a string of opt
 
 
 Please refer to the example for details: **addons/simplemenu/example/**
-
-

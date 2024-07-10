@@ -347,7 +347,7 @@ func _create_menu(menu_path: StringName, parent_menu: PopupMenu):
 			var menu_popup = _create_popup_menu(sub_menu_path)
 			_menu_path_to_popup_menu_map[sub_menu_path] = menu_popup
 			parent_menu.add_child(menu_popup)
-			parent_menu.add_submenu_item( menu_name, menu_name )
+			parent_menu.add_submenu_node_item(menu_name, menu_popup )
 		# 开始记录这个菜单，用以这个菜单的下一级别的菜单
 		parent_menu = get_menu(sub_menu_path)
 
@@ -396,5 +396,3 @@ func _id_pressed(id):
 		var status = get_menu_checked(menu_path)
 		set_menu_checked(menu_path, not status)
 	self.menu_pressed.emit(id, menu_path)
-
-

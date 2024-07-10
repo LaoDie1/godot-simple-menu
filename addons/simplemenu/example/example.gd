@@ -12,7 +12,7 @@ func _ready():
 	simple_menu.init_menu({
 		"File": [
 			"Open", "Save", "Save As", "-",
-			{"Export As": [ "Export PNG", "Export JPG" ] }, "-",
+			{"Export As...": [ "Export PNG", "Export JPG" ] }, "-",
 			"Quit",
 		],
 		"Edit": [
@@ -51,6 +51,3 @@ func _ready():
 func _on_simple_menu_menu_pressed(idx, menu_path):
 	# Implement menu functions 
 	print("Clicked: ", menu_path)
-
-
-
