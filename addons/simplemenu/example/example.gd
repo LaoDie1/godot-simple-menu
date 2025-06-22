@@ -1,36 +1,31 @@
 @tool
 extends Control
 
-
 const ICONS = preload("res://addons/simplemenu/example/icons.tres")
 
-
-@onready var simple_menu = %SimpleMenu
-
-
 func _ready():
+	var simple_menu = %SimpleMenu
 	simple_menu.init_menu({
 		"File": [
 			"Open", "Save", "Save As", "-",
-			{"Export As...": [ "Export PNG", "Export JPG" ] }, "-",
+			"Auto Save", {"Export As...": [ "Export PNG", "Export JPG" ] }, "-",
 			"Quit",
 		],
 		"Edit": [
 			"Undo", "Redo", "-",
 			"Copy", "Paste", "Cut", "Clear", "-",
-			"Auto Save"
 		]
 	})
 	
 	simple_menu.init_shortcut({
-		"/File/Open": SimpleMenu.parse_shortcut("Ctrl+O"),
-		"/File/Save": SimpleMenu.parse_shortcut("Ctrl+S"),
-		"/File/Save As": SimpleMenu.parse_shortcut("Ctrl+Shift+S"),
-		"/Edit/Undo": SimpleMenu.parse_shortcut("Ctrl+Z"),
-		"/Edit/Redo": SimpleMenu.parse_shortcut("Ctrl+Shift+Z"),
-		"/Edit/Copy": SimpleMenu.parse_shortcut("Ctrl+C"),
-		"/Edit/Paste": SimpleMenu.parse_shortcut("Ctrl+V"),
-		"/Edit/Cut": SimpleMenu.parse_shortcut("Ctrl+X"),
+		"/File/Open": "Ctrl+O",
+		"/File/Save": "Ctrl+S",
+		"/File/Save As": "Ctrl+Shift+S",
+		"/Edit/Undo": "Ctrl+Z",
+		"/Edit/Redo": "Ctrl+Shift+Z",
+		"/Edit/Copy": "Ctrl+C",
+		"/Edit/Paste": "Ctrl+V",
+		"/Edit/Cut": "Ctrl+X",
 	})
 	
 	simple_menu.init_icon({
@@ -43,9 +38,8 @@ func _ready():
 		"/Edit/Clear": ICONS.get_icon("Clear", "EditorIcons"),
 	})
 	
-	simple_menu.set_menu_as_checkable("/Edit/Auto Save", true)
-	simple_menu.set_menu_checked("/Edit/Auto Save", true)
-	
+	simple_menu.set_menu_as_checkable("/File/Auto Save", true)
+	simple_menu.set_menu_checked("/File/Auto Save", true)
 
 
 func _on_simple_menu_menu_pressed(idx, menu_path):

@@ -2,12 +2,55 @@
 #    simple Menu
 #============================================================
 # - author: zhangxuetu
-# - datetime: 2022-11-27 01:01:10
-# - version: 4.2.1
+# - datetime: 2025-6-23 04:03:10
+# - version: 4.4.1
 #============================================================
-## 简单菜单
+## 简单菜单。提供一个简单快速的方式创建菜单节点和功能
 ##
-##通过调用 [method init_menu] 方法初始化菜单项，[method init_shortcut] 初始化快捷键。
+##通过调用 [method init_menu] 方法初始化菜单项，[method init_shortcut] 初始化快捷键。[br]
+## 
+##添加的菜单数据中 [Dictionary] 类型的数据创建菜单子节点，[Array] 添加菜单项
+##[codeblock]
+##$SimpleMenu.init_menu({
+##    "File": [
+##        "Open", "Save", 
+##        {"Export": ["Text", "JSON", "CSV"]},  # 2级子菜单
+##        "-", 
+##        "Quit"
+##    ], 
+##    "Edit": ["Redo", "Undo"],
+##})
+##[/codeblock]
+##添加快捷键
+##[codeblock]
+##$SimpleMenu.init_shortcut({
+##    "/File/Open": "ctrl+o",
+##    "/File/Save": "ctrl+s",
+##    "/File/Quit": "ctrl+q",
+##    "/Edit/Undo": "ctrl+z",
+##    "/Edit/Redo": "ctrl+shift+z",
+##})
+##[/codeblock]
+##连接菜单信号执行菜单功能
+##[codeblock]
+##$SimpleMenu.menu_pressed.connect(
+##    func(idx, menu_path):
+##        match menu_path:
+##            "/File/Open":
+##                pass
+##            "/File/Save":
+##                pass
+##            "/File/Quit":
+##                Engine.get_main_loop().quit() # 退出程序
+##            "/Edit/Redo":
+##                pass
+##            "/Edit/Undo":
+##                pass
+##            _:
+##                printerr("没有实现 %s 菜单的功能" % menu_path)
+##                push_error("没有实现 %s 菜单的功能" % menu_path)
+##)
+##[/codeblock]
 @tool
 class_name SimpleMenu
 extends MenuBar
@@ -55,7 +98,9 @@ func get_menu(menu_path: StringName) -> PopupMenu:
 ##    "keycode": KEY_C,
 ##}
 ##[/codeblock]
-func set_menu_shortcut(menu_path: StringName, data: Dictionary):
+func set_menu_shortcut(menu_path: StringName, data):
+	if data is String:
+		data = parse_shortcut(data)
 	var shortcut = Shortcut.new()
 	var input = InputEventKey.new()
 	shortcut.events.append(input)
@@ -76,9 +121,10 @@ func set_menu_shortcut(menu_path: StringName, data: Dictionary):
 func _execute_menu_by_path(menu_path: StringName, method_name: String, params: Array = []):
 	var menu = get_menu(menu_path)
 	var idx = get_menu_idx(menu_path)
-	if menu and idx > -1:
+	if menu and idx > 0:
 		return menu.callv(method_name, params)
 	return null
+
 
 ## 设置菜单的可用性
 func set_item_disabled(menu_path: StringName, value: bool):
@@ -87,20 +133,19 @@ func set_item_disabled(menu_path: StringName, value: bool):
 	if menu and idx > -1:
 		menu.set_item_disabled(idx, value)
 
+
 ## 设置菜单复选框启用状态
 func set_menu_as_checkable(menu_path: StringName, value: bool):
 	var menu = get_menu(menu_path)
 	var idx = get_menu_idx(menu_path)
-	if menu and idx > -1:
+	if menu and idx > 0:
 		menu.set_item_as_checkable(idx, value)
-	else:
-		push_warning("没有 %s 菜单" % menu_path)
 
 ## 菜单复选框是否是启用的
 func is_menu_as_checkable(menu_path: StringName) -> bool:
 	var menu = get_menu(menu_path)
 	var idx = get_menu_idx(menu_path)
-	if menu and idx > -1:
+	if menu and idx > 0:
 		return menu.is_item_checkable(idx)
 	return false
 
@@ -131,7 +176,7 @@ func set_menu_checked(menu_path: StringName, value: bool):
 func get_menu_checked(menu_path: StringName) -> bool:
 	var menu = get_menu(menu_path)
 	var idx = get_menu_idx(menu_path)
-	if menu and idx > -1:
+	if menu and idx > 0:
 		return menu.is_item_checked(idx)
 	return false
 
@@ -174,6 +219,13 @@ func get_parent_menu_path(menu_path: StringName) -> StringName:
 			return parent_path
 	return ""
 
+func add_menu_by_path(menu_path: String):
+	menu_path = menu_path.trim_prefix("/")
+	var items = menu_path.split("/")
+	var p : String = "/"
+	for i in items.size():
+		add_menu(items[i], p)
+		p = p.path_join(items[i])
 
 
 #=====================================================
@@ -200,16 +252,19 @@ func init_menu(data: Dictionary):
 ## 初始化快捷键，需要添加对应菜单。示例：
 ##[codeblock]
 ##{
-##    "/File/Open": {"keycode": KEY_O, "ctrl": true},
-##    "/File/Save": {"keycode": KEY_S, "ctrl": true},
-##    "/File/Export/JSON": {"keycode": KEY_E, "shift": true, "ctrl": true},
+##    "/File/Open": "ctrl+o",
+##    "/File/Save": "Ctrl+S",
+##    "/File/Export/JSON": "ctrl+shift+e, # 或者{"keycode": KEY_E, "shift": true, "ctrl": true}
 ##}
 ##[/codeblock]
 func init_shortcut(data_list: Dictionary):
-	var data : Dictionary
+	var data
 	for menu_path in data_list:
 		data = data_list[menu_path]
+		if data is String:
+			data = parse_shortcut(data)
 		set_menu_shortcut(menu_path, data)
+
 
 ## 初始化这些项的图标。示例：
 ##[codeblock]
@@ -229,12 +284,10 @@ func init_icon(data: Dictionary):
 ##[br][kbd]menu_data[/kbd]  这个菜单项包含的数据
 ##[br][kbd]parent_menu_path[/kbd]  父级菜单路径
 func add_menu(menu_data, parent_menu_path: StringName):
-	var parent_popup_menu : PopupMenu = get_menu(parent_menu_path)
-	
-	_auto_increment_menu_idx += 1
-	
 	# 不是根路径时
 	if parent_menu_path != "/":
+		_auto_increment_menu_idx += 1
+		var parent_popup_menu : PopupMenu = get_menu(parent_menu_path)
 		# Dictionary
 		if menu_data is Dictionary:
 			for menu_name in menu_data:
@@ -271,21 +324,37 @@ func add_menu(menu_data, parent_menu_path: StringName):
 			assert(false, "错误的数据类型：" + str(typeof(menu_data)) )
 	
 	else:
-		
 		# 根菜单按钮
-		for menu_name in menu_data:
-			# 添加菜单按钮
-			
-			var menu := PopupMenu.new()
-			menu.name = menu_name
-			add_child(menu)
-			
-			# 设置属性
-			var menu_path = parent_menu_path.path_join(menu_name) 
-			_set_popup_menu(menu_path, menu)
-			
-			# 添加这个按钮菜单的子菜单
-			add_menu(menu_data[menu_name], menu_path)
+		if menu_data is Dictionary:
+			for menu_name in menu_data:
+				# 添加菜单按钮
+				var menu := PopupMenu.new()
+				menu.name = menu_name
+				add_child(menu)
+				var menu_path : String = parent_menu_path.path_join(menu_name) 
+				_register_popup_menu(menu_path, menu)
+				# 添加这个按钮菜单的子菜单
+				add_menu(menu_data[menu_name], menu_path)
+		
+		elif menu_data is Array:
+			for menu_name in menu_data:
+				add_menu(menu_name, "/")
+		
+		elif menu_data is String:
+			var menu_path : String = parent_menu_path.path_join(menu_data) 
+			menu_path = valid_menu_path(menu_path)
+			if not _menu_path_to_popup_menu_map.has(menu_path):
+				var menu := PopupMenu.new()
+				menu.name = menu_data
+				add_child(menu)
+				_register_popup_menu(menu_path, menu)
+
+
+func set_menu_disabled_by_path(menu_path:String, disable: bool):
+	var idx : int = get_menu_idx(menu_path)
+	if idx > -1:
+		var menu = get_menu(menu_path)
+		menu.set_item_disabled(idx, disable)
 
 
 ## 移除菜单
@@ -343,11 +412,11 @@ func _create_menu(menu_path: StringName, parent_menu: PopupMenu):
 		var sub_menu_path = "/" + "/".join(parent_menu_names.slice(0, i + 1))
 		# 没有这个菜单则添加
 		if not _menu_path_to_popup_menu_map.has(sub_menu_path):
-			var menu_name = parent_menu_names[i]
-			var menu_popup = _create_popup_menu(sub_menu_path)
+			var menu_name : String = parent_menu_names[i]
+			var menu_popup : PopupMenu = _create_popup_menu(sub_menu_path)
 			_menu_path_to_popup_menu_map[sub_menu_path] = menu_popup
 			parent_menu.add_child(menu_popup)
-			parent_menu.add_submenu_node_item(menu_name, menu_popup )
+			parent_menu.add_submenu_node_item( menu_name, menu_popup )
 		# 开始记录这个菜单，用以这个菜单的下一级别的菜单
 		parent_menu = get_menu(sub_menu_path)
 
@@ -379,12 +448,20 @@ static func parse_shortcut(shortcut_text: String) -> Dictionary:
 func _create_popup_menu(path: StringName) -> PopupMenu:
 	var menu_popup = PopupMenu.new()
 	menu_popup.name = path.get_file()
-	_set_popup_menu(path, menu_popup)
+	_register_popup_menu(path, menu_popup)
 	return menu_popup
 
 
+func valid_menu_path(menu_path: String) -> String:
+	if not menu_path.begins_with("/"):
+		menu_path = "/" + menu_path
+	if menu_path.ends_with("/"):
+		menu_path = menu_path.trim_suffix("/")
+	return menu_path
+
 # 设置菜单属性
-func _set_popup_menu(menu_path: StringName, menu_popup: PopupMenu):
+func _register_popup_menu(menu_path: StringName, menu_popup: PopupMenu):
+	menu_path = valid_menu_path(menu_path)
 	self._menu_path_to_popup_menu_map[menu_path] = menu_popup
 	# 点击菜单时
 	menu_popup.id_pressed.connect(_id_pressed)

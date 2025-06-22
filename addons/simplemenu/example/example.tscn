@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://nsm07vflgb2a"]
 
-[ext_resource type="Script" path="res://addons/simplemenu/example/example.gd" id="1_001t7"]
-[ext_resource type="Script" path="res://addons/simplemenu/simple_menu.gd" id="1_8523d"]
+[ext_resource type="Script" uid="uid://dip7jgccna728" path="res://addons/simplemenu/example/example.gd" id="1_001t7"]
+[ext_resource type="Script" uid="uid://bqqfaci4umbx3" path="res://addons/simplemenu/simple_menu.gd" id="1_8523d"]
 
 [node name="Example" type="Control"]
 layout_mode = 3
