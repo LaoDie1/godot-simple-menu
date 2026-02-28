@@ -31,14 +31,14 @@ func _ready():
     })
 
     simple_menu.init_shortcut({
-        "/File/Open": SimpleMenu.parse_shortcut("Ctrl+O"),
-        "/File/Save": SimpleMenu.parse_shortcut("Ctrl+S"),
-        "/File/Save As": SimpleMenu.parse_shortcut("Ctrl+Shift+S"),
-        "/Edit/Undo": SimpleMenu.parse_shortcut("Ctrl+Z"),
-        "/Edit/Redo": SimpleMenu.parse_shortcut("Ctrl+Shift+Z"),
-        "/Edit/Copy": SimpleMenu.parse_shortcut("Ctrl+C"),
-        "/Edit/Paste": SimpleMenu.parse_shortcut("Ctrl+V"),
-        "/Edit/Cut": SimpleMenu.parse_shortcut("Ctrl+X"),
+        "/File/Open": "Ctrl+O",
+        "/File/Save": "Ctrl+S",
+        "/File/Save As": "Ctrl+Shift+S",
+        "/Edit/Undo": "Ctrl+Z",
+        "/Edit/Redo": "Ctrl+Shift+Z",
+        "/Edit/Copy": "Ctrl+C",
+        "/Edit/Paste": "Ctrl+V",
+        "/Edit/Cut": "Ctrl+X",
     })
 ```
 
